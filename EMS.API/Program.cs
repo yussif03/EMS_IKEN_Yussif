@@ -8,6 +8,10 @@ namespace EMS.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Read configuration values
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            var appName = builder.Configuration["ApplicationSettings:ApplicationName"];
+
             // Add services to the container.
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -16,6 +20,10 @@ namespace EMS.API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
             var app = builder.Build();
+
+            var logger = app.Logger;
+            logger.LogInformation("Application Name: {AppName}", appName);
+            logger.LogInformation("Database Connection: {ConnectionString}", connectionString);
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
