@@ -1,3 +1,4 @@
+using EMS.API.Endpoints;
 
 namespace EMS.API
 {
@@ -8,17 +9,19 @@ namespace EMS.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();
@@ -27,6 +30,8 @@ namespace EMS.API
 
 
             app.MapControllers();
+
+            app.MapGroup("/api/employees").MapEmployeeEndpoints();
 
             app.Run();
         }
