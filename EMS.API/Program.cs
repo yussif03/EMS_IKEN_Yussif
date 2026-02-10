@@ -50,6 +50,8 @@ namespace EMS.API
             app.MapControllers();
 
             app.MapGroup("/api/employees").MapEmployeeEndpoints();
+            app.MapGroup("/api/departments").MapDepartmentEndpoints();
+            app.MapGroup("/api/positions").MapPositionEndpoints();
 
             app.Run();
         }

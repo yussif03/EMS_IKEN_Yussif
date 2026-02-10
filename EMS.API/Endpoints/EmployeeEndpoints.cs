@@ -37,7 +37,7 @@ namespace EMS.API.Endpoints
                     Status = dto.Status,
                     DepartmentId = dto.DepartmentId,
                     PositionId = dto.PositionId,
-                    isDeleted = false
+                    IsDeleted = false
                 };
 
                 var newId = await repo.AddAsync(employee);
@@ -61,7 +61,6 @@ namespace EMS.API.Endpoints
                 existingEmployee.HireDate = dto.HireDate;
                 existingEmployee.Salary = dto.Salary;
                 existingEmployee.Status = dto.Status;
-                existingEmployee.isDeleted = dto.isDeleted;
                 existingEmployee.DepartmentId = dto.DepartmentId;
                 existingEmployee.PositionId = dto.PositionId;
 
