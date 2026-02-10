@@ -1,4 +1,6 @@
 using EMS.API.Endpoints;
+using EMS.API.Models;
+using EMS.API.Repositories.Base;
 
 namespace EMS.API
 {
@@ -18,6 +20,10 @@ namespace EMS.API
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+            builder.Services.AddScoped<IRepository<Employee>, EmployeeRepository>();
+            builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
+            builder.Services.AddScoped<IRepository<Position>, PositionRepository>();
 
             var app = builder.Build();
 
