@@ -11,12 +11,12 @@ public class PositionRepository
     {
     }
 
-    protected override string TableName => "Position";
+    protected override string TableName => "Positions";
 
     public override async Task<int> AddAsync(Position position)
     {
-        const string sql = @"
-            INSERT INTO Position (Title, IsDeleted)
+        var sql = $@"
+            INSERT INTO {TableName} (Title, IsDeleted)
             VALUES (@Title, @IsDeleted);
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
@@ -27,8 +27,8 @@ public class PositionRepository
 
     public override async Task<bool> UpdateAsync(Position position)
     {
-        const string sql = @"
-            UPDATE Position SET
+        var sql = $@"
+            UPDATE {TableName} SET
                 Title = @Title
             WHERE Id = @Id AND IsDeleted = 0
         ";

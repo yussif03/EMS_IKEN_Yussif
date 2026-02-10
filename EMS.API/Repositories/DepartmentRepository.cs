@@ -11,12 +11,12 @@ public class DepartmentRepository
     {
     }
 
-    protected override string TableName => "Department";
+    protected override string TableName => "Departments";
 
     public override async Task<int> AddAsync(Department department)
     {
-        const string sql = @"
-            INSERT INTO Department (Name, IsDeleted)
+        var sql = $@"
+            INSERT INTO {TableName} (Name, IsDeleted)
             VALUES (@Name, @IsDeleted);
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
@@ -27,8 +27,8 @@ public class DepartmentRepository
 
     public override async Task<bool> UpdateAsync(Department department)
     {
-        const string sql = @"
-            UPDATE Department SET
+        var sql = $@"
+            UPDATE {TableName} SET
                 Name = @Name
             WHERE Id = @Id AND IsDeleted = 0
         ";
