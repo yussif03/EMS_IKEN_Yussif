@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using EMS.API.Data.Interface;
 using EMS.API.Models;
 using EMS.API.Repositories.Base;
@@ -16,8 +16,8 @@ public class DepartmentRepository
     public override async Task<int> AddAsync(Department department)
     {
         var sql = $@"
-            INSERT INTO {TableName} (Name, IsDeleted)
-            VALUES (@Name, @IsDeleted);
+            INSERT INTO {TableName} (Name, Description, IsDeleted)
+            VALUES (@Name, @Description, @IsDeleted);
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
 
@@ -29,7 +29,8 @@ public class DepartmentRepository
     {
         var sql = $@"
             UPDATE {TableName} SET
-                Name = @Name
+                Name = @Name,
+                Description = @Description
             WHERE Id = @Id AND IsDeleted = 0
         ";
 

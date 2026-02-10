@@ -1,12 +1,9 @@
-﻿namespace EMS.API.Models
+namespace EMS.API.Models.DTOs
 {
-    public class Position
+    public class UpdatePositionDto
     {
-        public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public decimal MinSalary { get; set; }
         public decimal MaxSalary { get; set; }
-        public bool IsDeleted { get; set; } = false;
-
     }
 }
