@@ -34,6 +34,7 @@ namespace EMS.API.Endpoints
                     PhoneNumber = dto.PhoneNumber,
                     HireDate = dto.HireDate,
                     Salary = dto.Salary,
+                    Status = dto.Status,
                     DepartmentId = dto.DepartmentId,
                     PositionId = dto.PositionId,
                     isDeleted = false
@@ -59,6 +60,7 @@ namespace EMS.API.Endpoints
                 existingEmployee.PhoneNumber = dto.PhoneNumber;
                 existingEmployee.HireDate = dto.HireDate;
                 existingEmployee.Salary = dto.Salary;
+                existingEmployee.Status = dto.Status;
                 existingEmployee.isDeleted = dto.isDeleted;
                 existingEmployee.DepartmentId = dto.DepartmentId;
                 existingEmployee.PositionId = dto.PositionId;
