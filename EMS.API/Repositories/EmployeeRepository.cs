@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using EMS.API.Data.Interface;
 using EMS.API.Models;
 using EMS.API.Repositories.Base;
@@ -17,9 +17,9 @@ public class EmployeeRepository
     {
         var sql = $@"
         INSERT INTO {TableName}
-        (FullName, Email, PhoneNumber, HireDate, Salary, IsDeleted, DepartmentId, PositionId)
+        (FullName, Email, PhoneNumber, HireDate, Salary, Status, IsDeleted, DepartmentId, PositionId)
         VALUES
-        (@FullName, @Email, @PhoneNumber, @HireDate, @Salary, @IsDeleted, @DepartmentId, @PositionId);
+        (@FullName, @Email, @PhoneNumber, @HireDate, @Salary, @Status, @IsDeleted, @DepartmentId, @PositionId);
         SELECT CAST(SCOPE_IDENTITY() AS int);
     ";
 
@@ -37,6 +37,7 @@ public class EmployeeRepository
             PhoneNumber = @PhoneNumber,
             HireDate = @HireDate,
             Salary = @Salary,
+            Status = @Status,
             DepartmentId = @DepartmentId,
             PositionId = @PositionId
         WHERE Id = @Id AND IsDeleted = 0

@@ -1,4 +1,4 @@
-﻿namespace EMS.API.Models
+namespace EMS.API.Models
 {
     public class Employee
     {
@@ -8,6 +8,7 @@
         public string PhoneNumber { get; set; } = string.Empty;
         public DateTime HireDate { get; set; }
         public decimal Salary { get; set; }
+        public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
         public bool isDeleted { get; set; } = false;
         // Foreign Keys
         public int DepartmentId { get; set; }
