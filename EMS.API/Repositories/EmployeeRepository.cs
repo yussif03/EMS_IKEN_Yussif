@@ -24,6 +24,8 @@ public class EmployeeRepository : Repository<Employee>
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
 
+        // SELECT CAST(SCOPE_IDENTITY() AS int); returns last identity value (id) created
+
         using var connection = _connectionFactory.CreateConnection();
         return await connection.QuerySingleAsync<int>(sql, employee);
     }
