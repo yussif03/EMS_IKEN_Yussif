@@ -3,12 +3,13 @@ using EMS.API.Data.Interface;
 using EMS.API.Models;
 using EMS.API.Repositories.Base;
 
-public class EmployeeRepository
-    : Repository<Employee>
+public class EmployeeRepository : Repository<Employee>
 {
-    public EmployeeRepository(IDbConnectionFactory connectionFactory)
-        : base(connectionFactory)
+    private readonly ILogger<EmployeeRepository> _logger;
+
+    public EmployeeRepository(IDbConnectionFactory connectionFactory, ILogger<EmployeeRepository> logger) : base(connectionFactory, logger)
     {
+        _logger = logger;
     }
 
     protected override string TableName => "Employees";
@@ -16,15 +17,30 @@ public class EmployeeRepository
     public override async Task<int> AddAsync(Employee employee)
     {
         var sql = $@"
-        INSERT INTO {TableName}
-        (FullName, Email, PhoneNumber, HireDate, Salary, Status, IsDeleted, DepartmentId, PositionId)
-        VALUES
-        (@FullName, @Email, @PhoneNumber, @HireDate, @Salary, @Status, @IsDeleted, @DepartmentId, @PositionId);
-        SELECT CAST(SCOPE_IDENTITY() AS int);
-    ";
+            INSERT INTO {TableName}
+                (FullName, Email, PhoneNumber, HireDate, Salary, Status, IsDeleted, DepartmentId, PositionId)
+                VALUES
+                (@FullName, @Email, @PhoneNumber, @HireDate, @Salary, @Status, @IsDeleted, @DepartmentId, @PositionId);
+            SELECT CAST(SCOPE_IDENTITY() AS int);
+        ";
 
-        using var connection = _connectionFactory.CreateConnection();
-        return await connection.QuerySingleAsync<int>(sql, employee);
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+
+            _logger.LogDebug("Executing INSERT for employee with email {Email}", employee.Email);
+
+            var newId = await connection.QuerySingleAsync<int>(sql, employee);
+
+            _logger.LogDebug("Database returned new EmployeeId {EmployeeId}", newId);
+
+            return newId;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Database error while inserting employee with email {Email}", employee.Email);
+            throw; // Let API layer handle response
+        }
     }
 
 
@@ -43,9 +59,25 @@ public class EmployeeRepository
         WHERE Id = @Id AND IsDeleted = 0
     ";
 
-        using var connection = _connectionFactory.CreateConnection();
-        var rows = await connection.ExecuteAsync(sql, employee);
-        return rows > 0;
-    }
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
 
+            _logger.LogDebug("Executing UPDATE for EmployeeId {EmployeeId}", employee.Id);
+
+            var rows = await connection.ExecuteAsync(sql, employee);
+
+            if (rows == 0)
+            {
+                _logger.LogWarning("UPDATE affected 0 rows for EmployeeId {EmployeeId}", employee.Id);
+            }
+
+            return rows > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Database error while updating EmployeeId {EmployeeId}", employee.Id);
+            throw;
+        }
+    }
 }
