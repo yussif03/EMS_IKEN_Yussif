@@ -45,6 +45,7 @@ namespace EMS.API.Endpoints
                 {
                     Name = dto.Name,
                     Description = dto.Description,
+                    ManagerId = dto.ManagerId,
                     IsDeleted = false
                 };
 
@@ -69,6 +70,7 @@ namespace EMS.API.Endpoints
 
                 existingDepartment.Name = dto.Name;
                 existingDepartment.Description = dto.Description;
+                existingDepartment.ManagerId = dto.ManagerId;
 
                 var updated = await repo.UpdateAsync(existingDepartment);
 

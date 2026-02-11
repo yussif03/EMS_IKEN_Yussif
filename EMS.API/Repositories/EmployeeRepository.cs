@@ -18,9 +18,9 @@ public class EmployeeRepository : Repository<Employee>
     {
         var sql = $@"
             INSERT INTO {TableName}
-                (FullName, Email, PhoneNumber, HireDate, Salary, Status, IsDeleted, DepartmentId, PositionId)
+                (FullName, Email, PhoneNumber, DateOfBirth, HireDate, Address, Salary, Status, IsDeleted, DepartmentId, PositionId)
                 VALUES
-                (@FullName, @Email, @PhoneNumber, @HireDate, @Salary, @Status, @IsDeleted, @DepartmentId, @PositionId);
+                (@FullName, @Email, @PhoneNumber, @DateOfBirth, @HireDate, @Address, @Salary, @Status, @IsDeleted, @DepartmentId, @PositionId);
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
 
@@ -51,7 +51,9 @@ public class EmployeeRepository : Repository<Employee>
             FullName = @FullName,
             Email = @Email,
             PhoneNumber = @PhoneNumber,
+            DateOfBirth = @DateOfBirth,
             HireDate = @HireDate,
+            Address = @Address,
             Salary = @Salary,
             Status = @Status,
             DepartmentId = @DepartmentId,

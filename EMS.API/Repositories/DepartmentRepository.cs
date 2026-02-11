@@ -17,8 +17,8 @@ public class DepartmentRepository : Repository<Department>
     public override async Task<int> AddAsync(Department department)
     {
         var sql = $@"
-            INSERT INTO {TableName} (Name, Description, IsDeleted)
-            VALUES (@Name, @Description, @IsDeleted);
+            INSERT INTO {TableName} (Name, Description, ManagerId, IsDeleted)
+            VALUES (@Name, @Description, @ManagerId, @IsDeleted);
             SELECT CAST(SCOPE_IDENTITY() AS int);
         ";
 
@@ -46,7 +46,8 @@ public class DepartmentRepository : Repository<Department>
         var sql = $@"
             UPDATE {TableName} SET
                 Name = @Name,
-                Description = @Description
+                Description = @Description,
+                ManagerId = @ManagerId
             WHERE Id = @Id AND IsDeleted = 0
         ";
 
