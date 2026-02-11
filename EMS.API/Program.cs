@@ -1,6 +1,7 @@
 using EMS.API.Data.Implementation;
 using EMS.API.Data.Interface;
 using EMS.API.Endpoints;
+using EMS.API.Middleware;
 using EMS.API.Models;
 using EMS.API.Repositories.Base;
 
@@ -42,12 +43,12 @@ namespace EMS.API
                 app.UseSwaggerUI();
             }
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
+            app.UseMiddleware<RequestLoggingMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
-
-            app.MapControllers();
 
             app.MapGroup("/api/employees").MapEmployeeEndpoints();
             app.MapGroup("/api/departments").MapDepartmentEndpoints();
