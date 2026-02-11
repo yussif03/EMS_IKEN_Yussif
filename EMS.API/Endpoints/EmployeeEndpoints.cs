@@ -47,7 +47,9 @@ namespace EMS.API.Endpoints
                     FullName = dto.FullName,
                     Email = dto.Email,
                     PhoneNumber = dto.PhoneNumber,
+                    DateOfBirth = dto.DateOfBirth,
                     HireDate = dto.HireDate,
+                    Address = dto.Address,
                     Salary = dto.Salary,
                     Status = dto.Status,
                     DepartmentId = dto.DepartmentId,
@@ -78,7 +80,9 @@ namespace EMS.API.Endpoints
                 existingEmployee.FullName = dto.FullName;
                 existingEmployee.Email = dto.Email;
                 existingEmployee.PhoneNumber = dto.PhoneNumber;
+                existingEmployee.DateOfBirth = dto.DateOfBirth;
                 existingEmployee.HireDate = dto.HireDate;
+                existingEmployee.Address = dto.Address;
                 existingEmployee.Salary = dto.Salary;
                 existingEmployee.Status = dto.Status;
                 existingEmployee.DepartmentId = dto.DepartmentId;
