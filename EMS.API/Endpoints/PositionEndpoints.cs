@@ -1,6 +1,6 @@
-using EMS.API.Models;
+using EMS.API.Handlers.PositionHandlers;
 using EMS.API.Models.DTOs;
-using EMS.API.Repositories.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Endpoints
 {
@@ -9,18 +9,19 @@ namespace EMS.API.Endpoints
         public static RouteGroupBuilder MapPositionEndpoints(this RouteGroupBuilder group)
         {
             // GET ALL POSITIONS
-            group.MapGet("/", async (IRepository<Position> repo) =>
+            group.MapGet("/", async ([FromServices]GetPositionsHandler handler) =>
             {
-                var positions = await repo.GetAllAsync();
+                var positions = await handler.HandleAsync();
                 return Results.Ok(positions);
             })
             .WithTags("Position")
             .WithDescription("Get all positions");
 
+
             // GET POSITION BY ID
-            group.MapGet("/{id:int}", async (int id, IRepository<Position> repo) =>
+            group.MapGet("/{id:int}", async (int id, [FromServices]GetPositionByIdHandler handler) =>
             {
-                var position = await repo.GetByIdAsync(id);
+                var position = await handler.HandleAsync(id);
 
                 return position is null
                     ? Results.NotFound($"Position with ID {id} not found")
@@ -29,46 +30,37 @@ namespace EMS.API.Endpoints
             .WithTags("Position")
             .WithDescription("Get position by id");
 
+
             // CREATE POSITION
-            group.MapPost("/", async (CreatePositionDto dto, IRepository<Position> repo) =>
+            group.MapPost("/", async ([FromBody]CreatePositionDto dto, [FromServices]CreatePositionHandler handler) =>
             {
-                var position = new Position
-                {
-                    Title = dto.Title,
-                    MinSalary = dto.MinSalary,
-                    MaxSalary = dto.MaxSalary,
-                    IsDeleted = false
-                };
+                var position = await handler.HandleAsync(dto);
 
-                position.Id = await repo.AddAsync(position);
-
-                return Results.Created($"/api/positions/{position.Id}", position);
+                return Results.Created(
+                    $"/api/positions/{position.Id}",
+                    position);
             })
             .WithTags("Position")
             .WithDescription("Create position");
 
+
             // UPDATE POSITION
-            group.MapPut("/{id:int}", async (int id, UpdatePositionDto dto, IRepository<Position> repo) =>
+            group.MapPut("/{id:int}", async (int id, [FromBody]UpdatePositionDto dto, [FromServices]UpdatePositionHandler handler) =>
             {
-                var position = await repo.GetByIdAsync(id);
-                if (position is null)
-                    return Results.NotFound($"Position with ID {id} not found");
+                var updated = await handler.HandleAsync(id, dto);
 
-                position.Title = dto.Title;
-                position.MinSalary = dto.MinSalary;
-                position.MaxSalary = dto.MaxSalary;
-
-                await repo.UpdateAsync(position);
-
-                return Results.Ok(position);
+                return updated is null
+                    ? Results.NotFound($"Position with ID {id} not found")
+                    : Results.Ok(updated);
             })
             .WithTags("Position")
             .WithDescription("Update position");
 
+
             // DELETE POSITION (Soft Delete)
-            group.MapDelete("/{id:int}", async (int id, IRepository<Position> repo) =>
+            group.MapDelete("/{id:int}", async (int id, [FromServices]DeletePositionHandler handler) =>
             {
-                var deleted = await repo.SoftDeleteAsync(id);
+                var deleted = await handler.HandleAsync(id);
 
                 return deleted
                     ? Results.NoContent()

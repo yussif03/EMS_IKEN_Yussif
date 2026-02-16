@@ -1,6 +1,9 @@
 using EMS.API.Data.Implementation;
 using EMS.API.Data.Interface;
 using EMS.API.Endpoints;
+using EMS.API.Handlers.DepartmentHandlers;
+using EMS.API.Handlers.EmployeeHandlers;
+using EMS.API.Handlers.PositionHandlers;
 using EMS.API.Middleware;
 using EMS.API.Models;
 using EMS.API.Repositories.Base;
@@ -17,6 +20,9 @@ namespace EMS.API
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             var appName = builder.Configuration["ApplicationSettings:ApplicationName"];
 
+            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            builder.Services.AddOpenApi();
+
             // Add services to the container.
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -30,6 +36,24 @@ namespace EMS.API
             builder.Services.AddScoped<IRepository<Department>, DepartmentRepository>();
             builder.Services.AddScoped<IRepository<Position>, PositionRepository>();
 
+            builder.Services.AddScoped<GetEmployeesHandler>(); // scoped --> repository scoped per request
+            builder.Services.AddScoped<GetEmployeeByIdHandler>();
+            builder.Services.AddScoped<CreateEmployeeHandler>();
+            builder.Services.AddScoped<UpdateEmployeeHandler>();
+            builder.Services.AddScoped<DeleteEmployeeHandler>();
+
+            builder.Services.AddScoped<GetDepartmentsHandler>();
+            builder.Services.AddScoped<GetDepartmentByIdHandler>();
+            builder.Services.AddScoped<CreateDepartmentHandler>();
+            builder.Services.AddScoped<UpdateDepartmentHandler>();
+            builder.Services.AddScoped<DeleteDepartmentHandler>();
+
+            builder.Services.AddScoped<GetPositionsHandler>();
+            builder.Services.AddScoped<GetPositionByIdHandler>();
+            builder.Services.AddScoped<CreatePositionHandler>();
+            builder.Services.AddScoped<UpdatePositionHandler>();
+            builder.Services.AddScoped<DeletePositionHandler>();
+
             var app = builder.Build();
 
             var logger = app.Logger;
@@ -39,6 +63,7 @@ namespace EMS.API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }

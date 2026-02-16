@@ -1,6 +1,6 @@
-using EMS.API.Models;
+using EMS.API.Handlers.EmployeeHandlers;
 using EMS.API.Models.DTOs;
-using EMS.API.Repositories.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Endpoints
 {
@@ -9,18 +9,19 @@ namespace EMS.API.Endpoints
         public static RouteGroupBuilder MapEmployeeEndpoints(this RouteGroupBuilder group)
         {
             // GET ALL EMPLOYEES
-            group.MapGet("/", async (IRepository<Employee> repo) =>
+            group.MapGet("/", async ([FromServices]GetEmployeesHandler handler) =>
             {
-                var employees = await repo.GetAllAsync();
+                var employees = await handler.HandleAsync();
                 return Results.Ok(employees);
             })
             .WithTags("Employee")
             .WithDescription("Get all employees");
 
+
             // GET EMPLOYEE BY ID
-            group.MapGet("/{id:int}", async (int id, IRepository<Employee> repo) =>
+            group.MapGet("/{id:int}", async (int id, [FromServices]GetEmployeeByIdHandler handler) =>
             {
-                var employee = await repo.GetByIdAsync(id);
+                var employee = await handler.HandleAsync(id);
 
                 return employee is null
                     ? Results.NotFound($"Employee with ID {id} not found")
@@ -29,60 +30,37 @@ namespace EMS.API.Endpoints
             .WithTags("Employee")
             .WithDescription("Get employee by id");
 
+
             // CREATE EMPLOYEE
-            group.MapPost("/", async (CreateEmployeeDto dto, IRepository<Employee> repo) =>
+            group.MapPost("/", async ([FromBody]CreateEmployeeDto dto, [FromServices]CreateEmployeeHandler handler) =>
             {
-                var employee = new Employee
-                {
-                    FullName = dto.FullName,
-                    Email = dto.Email,
-                    PhoneNumber = dto.PhoneNumber,
-                    DateOfBirth = dto.DateOfBirth,
-                    HireDate = dto.HireDate,
-                    Address = dto.Address,
-                    Salary = dto.Salary,
-                    Status = dto.Status,
-                    DepartmentId = dto.DepartmentId,
-                    PositionId = dto.PositionId,
-                    IsDeleted = false
-                };
+                var employee = await handler.HandleAsync(dto);
 
-                employee.Id = await repo.AddAsync(employee);
-
-                return Results.Created($"/api/employees/{employee.Id}", employee);
+                return Results.Created(
+                    $"/api/employees/{employee.Id}",
+                    employee);
             })
             .WithTags("Employee")
             .WithDescription("Create employee");
 
+
             // UPDATE EMPLOYEE
-            group.MapPut("/{id:int}", async (int id, UpdateEmployeeDto dto, IRepository<Employee> repo) =>
+            group.MapPut("/{id:int}", async (int id, [FromBody]UpdateEmployeeDto dto, [FromServices]UpdateEmployeeHandler handler) =>
             {
-                var employee = await repo.GetByIdAsync(id);
-                if (employee is null)
-                    return Results.NotFound($"Employee with ID {id} not found");
+                var updated = await handler.HandleAsync(id, dto);
 
-                employee.FullName = dto.FullName;
-                employee.Email = dto.Email;
-                employee.PhoneNumber = dto.PhoneNumber;
-                employee.DateOfBirth = dto.DateOfBirth;
-                employee.HireDate = dto.HireDate;
-                employee.Address = dto.Address;
-                employee.Salary = dto.Salary;
-                employee.Status = dto.Status;
-                employee.DepartmentId = dto.DepartmentId;
-                employee.PositionId = dto.PositionId;
-
-                await repo.UpdateAsync(employee);
-
-                return Results.Ok(employee);
+                return updated is null
+                    ? Results.NotFound($"Employee with ID {id} not found")
+                    : Results.Ok(updated);
             })
             .WithTags("Employee")
             .WithDescription("Update employee");
 
-            // DELETE EMPLOYEE (Soft Delete)
-            group.MapDelete("/{id:int}", async (int id, IRepository<Employee> repo) =>
+
+            // DELETE EMPLOYEE
+            group.MapDelete("/{id:int}", async (int id, [FromServices]DeleteEmployeeHandler handler) =>
             {
-                var deleted = await repo.SoftDeleteAsync(id);
+                var deleted = await handler.HandleAsync(id);
 
                 return deleted
                     ? Results.NoContent()

@@ -1,6 +1,6 @@
-using EMS.API.Models;
+using EMS.API.Handlers.DepartmentHandlers;
 using EMS.API.Models.DTOs;
-using EMS.API.Repositories.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Endpoints
 {
@@ -9,18 +9,19 @@ namespace EMS.API.Endpoints
         public static RouteGroupBuilder MapDepartmentEndpoints(this RouteGroupBuilder group)
         {
             // GET ALL DEPARTMENTS
-            group.MapGet("/", async (IRepository<Department> repo) =>
+            group.MapGet("/", async ([FromServices]GetDepartmentsHandler handler) =>
             {
-                var departments = await repo.GetAllAsync();
+                var departments = await handler.HandleAsync();
                 return Results.Ok(departments);
             })
             .WithTags("Department")
             .WithDescription("Get all departments");
 
+
             // GET DEPARTMENT BY ID
-            group.MapGet("/{id:int}", async (int id, IRepository<Department> repo) =>
+            group.MapGet("/{id:int}", async (int id, [FromServices]GetDepartmentByIdHandler handler) =>
             {
-                var department = await repo.GetByIdAsync(id);
+                var department = await handler.HandleAsync(id);
 
                 return department is null
                     ? Results.NotFound($"Department with ID {id} not found")
@@ -29,46 +30,37 @@ namespace EMS.API.Endpoints
             .WithTags("Department")
             .WithDescription("Get department by id");
 
+
             // CREATE DEPARTMENT
-            group.MapPost("/", async (CreateDepartmentDto dto, IRepository<Department> repo) =>
+            group.MapPost("/", async ([FromBody]CreateDepartmentDto dto, [FromServices]CreateDepartmentHandler handler) =>
             {
-                var department = new Department
-                {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    ManagerId = dto.ManagerId,
-                    IsDeleted = false
-                };
+                var department = await handler.HandleAsync(dto);
 
-                department.Id = await repo.AddAsync(department);
-
-                return Results.Created($"/api/departments/{department.Id}", department);
+                return Results.Created(
+                    $"/api/departments/{department.Id}",
+                    department);
             })
             .WithTags("Department")
             .WithDescription("Create department");
 
+
             // UPDATE DEPARTMENT
-            group.MapPut("/{id:int}", async (int id, UpdateDepartmentDto dto, IRepository<Department> repo) =>
+            group.MapPut("/{id:int}", async (int id, [FromBody]UpdateDepartmentDto dto, [FromServices]UpdateDepartmentHandler handler) =>
             {
-                var department = await repo.GetByIdAsync(id);
-                if (department is null)
-                    return Results.NotFound($"Department with ID {id} not found");
+                var updated = await handler.HandleAsync(id, dto);
 
-                department.Name = dto.Name;
-                department.Description = dto.Description;
-                department.ManagerId = dto.ManagerId;
-
-                await repo.UpdateAsync(department);
-
-                return Results.Ok(department);
+                return updated is null
+                    ? Results.NotFound($"Department with ID {id} not found")
+                    : Results.Ok(updated);
             })
             .WithTags("Department")
             .WithDescription("Update department");
 
+
             // DELETE DEPARTMENT (Soft Delete)
-            group.MapDelete("/{id:int}", async (int id, IRepository<Department> repo) =>
+            group.MapDelete("/{id:int}", async (int id, [FromServices]DeleteDepartmentHandler handler) =>
             {
-                var deleted = await repo.SoftDeleteAsync(id);
+                var deleted = await handler.HandleAsync(id);
 
                 return deleted
                     ? Results.NoContent()
