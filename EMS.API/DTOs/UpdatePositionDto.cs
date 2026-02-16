@@ -1,6 +1,6 @@
-namespace EMS.API.Models.DTOs
+namespace EMS.API.DTOs
 {
-    public class CreatePositionDto
+    public class UpdatePositionDto
     {
         public string Title { get; set; } = string.Empty;
         public decimal MinSalary { get; set; }

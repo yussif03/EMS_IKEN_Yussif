@@ -1,4 +1,4 @@
-namespace EMS.API.Models.DTOs
+namespace EMS.API.DTOs
 {
     public class UpdateDepartmentDto
     {

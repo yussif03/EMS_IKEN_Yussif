@@ -1,4 +1,4 @@
-namespace EMS.API.Models
+namespace EMS.API.Enums
 {
     public enum EmployeeStatus
     {

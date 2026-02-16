@@ -1,5 +1,5 @@
-﻿using EMS.API.Models;
-using EMS.API.Models.DTOs;
+﻿using EMS.API.DTOs;
+using EMS.API.Models;
 using EMS.API.Repositories.Base;
 
 namespace EMS.API.Handlers.EmployeeHandlers

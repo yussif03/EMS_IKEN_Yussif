@@ -1,4 +1,6 @@
-namespace EMS.API.Models.DTOs
+using EMS.API.Enums;
+
+namespace EMS.API.DTOs
 {
     public class CreateEmployeeDto
     {

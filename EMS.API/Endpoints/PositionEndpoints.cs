@@ -1,5 +1,5 @@
+using EMS.API.DTOs;
 using EMS.API.Handlers.PositionHandlers;
-using EMS.API.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.API.Endpoints

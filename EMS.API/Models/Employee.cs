@@ -1,3 +1,5 @@
+using EMS.API.Enums;
+
 namespace EMS.API.Models
 {
     public class Employee
